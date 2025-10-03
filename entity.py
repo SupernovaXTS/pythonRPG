@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from components.fighter import Fighter
     from game_map import GameMap
     from components.consumable import Consumable
+    from components.inventory import Inventory
 
 T = TypeVar("T", bound="Entity")
 
