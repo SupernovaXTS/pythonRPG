@@ -118,7 +118,7 @@ class MainGameEventHandler(EventHandler):
             action = PickupAction(player)
         elif key == events.I:
             self.engine.event_handler = InventoryActivateHandler(self.engine)
-        elif key == events.D:
+        elif key == events.H: # D conflicts with movement key
             self.engine.event_handler = InventoryDropHandler(self.engine)
 
         # No valid key was pressed
