@@ -1,4 +1,6 @@
 import copy
+import traceback
+
 import tcod
 import color
 from engine import Engine
@@ -52,6 +54,7 @@ def main() -> None:
         while True:
             root_console.clear()
             engine.event_handler.on_render(console=root_console)
+            context.present(root_console)
             engine.event_handler.handle_events(context)
 if __name__ == "__main__":
     main()
