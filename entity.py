@@ -2,6 +2,8 @@ from __future__ import annotations
 from render_order import RenderOrder
 
 import copy
+import math
+
 from typing import Optional, Tuple, Type, TypeVar, TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
@@ -48,6 +50,11 @@ class Entity:
     def gamemap(self) -> GameMap:
         return self.parent.gamemap
 
+    def distance(self, x: int, y: int) -> float:
+        """
+        Return the distance between the current entity and the given (x, y) coordinate.
+        """
+        return math.sqrt((x - self.x) ** 2 + (y - self.y) ** 2)
 
     def spawn(self: T, gamemap: GameMap, x: int, y: int) -> T:
         """Spawn a copy of this instance at the given location."""
