@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Callable, Optional, Tuple, TYPE_CHECKING, Union
-
+import types
 import tcod
 from tcod import libtcodpy
 import os
@@ -68,6 +68,22 @@ CONFIRM_KEYS = {
     events.KP_ENTER,
 }
 #
+class config():
+    # Unused modular config
+    def __init__(self):
+        self.keys = types.SimpleNamespace()
+        self.keys.movement = types.SimpleNamespace()
+        self.keys.movement.wasd = types.SimpleNamespace()
+        wasd = self.keys.movement.wasd
+        wasd.forward = 'w'
+        wasd.back = 's'
+        wasd.left = 'a'
+        wasd.right = 'd'
+        self.keys.movement.numpad = types.SimpleNamespace()
+        numpad = self.keys.movement.numpad
+        
+
+
 ActionOrHandler = Union[Action, "BaseEventHandler"]
 """An event handler return value which can trigger an action or switch active handlers.
 
@@ -116,7 +132,6 @@ class PopupMessage(BaseEventHandler):
         """Any key returns to the parent handler."""
         return self.parent
 
-
 # Event Handler
 class EventHandler(BaseEventHandler):
     def __init__(self, engine: Engine):
@@ -132,6 +147,9 @@ class EventHandler(BaseEventHandler):
             if not self.engine.player.is_alive:
                 # The player was killed sometime during or after the action.
                 return GameOverEventHandler(self.engine)
+            elif self.engine.player.level.requires_level_up:
+                return LevelUpEventHandler(self.engine)
+
             return MainGameEventHandler(self.engine)  # Return to the main handler.
         return self
 
@@ -159,7 +177,7 @@ class EventHandler(BaseEventHandler):
         if self.engine.game_map.in_bounds(event.tile.x, event.tile.y):
             self.engine.mouse_location = event.tile.x, event.tile.y
 
-#User Input
+#User Input 
 class AskUserEventHandler(EventHandler):
     """Handles user input for actions which require special input."""
 
@@ -194,6 +212,51 @@ class AskUserEventHandler(EventHandler):
         By default this returns to the main event handler.
         """
         return MainGameEventHandler(self.engine)
+
+class CharacterScreenEventHandler(AskUserEventHandler):
+    TITLE = "Character Information"
+
+    def on_render(self, console: tcod.Console) -> None:
+        super().on_render(console)
+
+        if self.engine.player.x <= 30:
+            x = 40
+        else:
+            x = 0
+
+        y = 0
+
+        width = len(self.TITLE) + 4
+
+        console.draw_frame(
+            x=x,
+            y=y,
+            width=width,
+            height=7,
+            title=self.TITLE,
+            clear=True,
+            fg=(255, 255, 255),
+            bg=(0, 0, 0),
+        )
+
+        console.print(
+            x=x + 1, y=y + 1, string=f"Level: {self.engine.player.level.current_level}"
+        )
+        console.print(
+            x=x + 1, y=y + 2, string=f"XP: {self.engine.player.level.current_xp}"
+        )
+        console.print(
+            x=x + 1,
+            y=y + 3,
+            string=f"XP for next Level: {self.engine.player.level.experience_to_next_level}",
+        )
+
+        console.print(
+            x=x + 1, y=y + 4, string=f"Attack: {self.engine.player.fighter.power}"
+        )
+        console.print(
+            x=x + 1, y=y + 5, string=f"Defense: {self.engine.player.fighter.defense}"
+        )
 
 class LevelUpEventHandler(AskUserEventHandler):
     TITLE = "Level Up"
@@ -517,6 +580,7 @@ class GameOverEventHandler(EventHandler):
             self.on_quit()
     
 # Main Game Handler
+
 class MainGameEventHandler(EventHandler):
 
     def ev_quit(self, event: tcod.event.Quit) -> Optional[Action]:
@@ -551,6 +615,9 @@ class MainGameEventHandler(EventHandler):
             return InventoryDropHandler(self.engine)
         elif key == events.SLASH    :
             return LookHandler(self.engine)
+        elif key == events.C:
+            return CharacterScreenEventHandler(self.engine)
+
 
         # No valid key was pressed
         return action
