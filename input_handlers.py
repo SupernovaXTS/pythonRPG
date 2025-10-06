@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Callable, Optional, Tuple, TYPE_CHECKING, Union
-import types
 import tcod
 from tcod import libtcodpy
 import os
@@ -68,20 +67,6 @@ CONFIRM_KEYS = {
     events.KP_ENTER,
 }
 #
-class config():
-    # Unused modular config
-    def __init__(self):
-        self.keys = types.SimpleNamespace()
-        self.keys.movement = types.SimpleNamespace()
-        self.keys.movement.wasd = types.SimpleNamespace()
-        wasd = self.keys.movement.wasd
-        wasd.forward = 'w'
-        wasd.back = 's'
-        wasd.left = 'a'
-        wasd.right = 'd'
-        self.keys.movement.numpad = types.SimpleNamespace()
-        numpad = self.keys.movement.numpad
-        
 
 
 ActionOrHandler = Union[Action, "BaseEventHandler"]
@@ -428,7 +413,14 @@ class InventoryEventHandler(AskUserEventHandler):
         if number_of_items_in_inventory > 0:
             for i, item in enumerate(self.engine.player.inventory.items):
                 item_key = chr(ord("a") + i)
-                console.print(x + 1, y + i + 1, f"({item_key}) {item.name}")
+                is_equipped = self.engine.player.equipment.item_is_equipped(item)
+
+                item_string = f"({item_key}) {item.name}"
+
+                if is_equipped:
+                    item_string = f"{item_string} (E)"
+
+                console.print(x + 1, y + i + 1, item_string)
         else:
             console.print(x + 1, y + 1, "(Empty)")
 
@@ -458,7 +450,13 @@ class InventoryActivateHandler(InventoryEventHandler):
 
     def on_item_selected(self, item: Item) -> Optional[ActionOrHandler]:
         """Return the action for the selected item."""
-        return item.consumable.get_action(self.engine.player)
+        if item.consumable:
+            # Return the action for the selected item.
+            return item.consumable.get_action(self.engine.player)
+        elif item.equippable:
+            return actions.EquipAction(self.engine.player, item)
+        else:
+            return None
 class InventoryDropHandler(InventoryEventHandler):
     """Handle dropping an inventory item."""
 
@@ -466,7 +464,8 @@ class InventoryDropHandler(InventoryEventHandler):
 
     def on_item_selected(self, item: Item) -> Optional[ActionOrHandler]:
         """Drop this item."""
-        return actions.DropItem(self.engine.player, item)
+        if self.entity.equipment.item_is_equipped(self.item):
+            self.entity.equipment.toggle_equip(self.item)
 
 #Ranged Targeting
 class SingleRangedAttackHandler(SelectIndexHandler):
