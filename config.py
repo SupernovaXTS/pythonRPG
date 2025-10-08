@@ -2,12 +2,23 @@ import types
 class config():
     # Unused modular config
     def __init__(self):
-        self.keys = types.SimpleNamespace()
-        keys = self.keys
-        self.keys.movement = types.SimpleNamespace()
-        keys.movement.wasd = types.SimpleNamespace()
+        self.layouts = types.SimpleNamespace()
+        layouts = self.layouts
         
-        wasd = keys.movement.wasd
+        # Directions for mapping to existing input handlers
+        layouts.directions = types.SimpleNamespace()
+        directions = layouts.directions
+        directions.north = (0, -1)
+        directions.south = (0, 1)
+        directions.west = (-1, 0)
+        directions.east = (1, 0)
+        directions.northwest = (-1, -1)
+        directions.northeast = (1, -1)
+        directions.southwest = (-1, 1)
+        directions.southeast = (1, 1)
+        layouts.wasd = types.SimpleNamespace()
+        
+        wasd = layouts.wasd
         wasd.north = 'w'
         wasd.south = 's'
         wasd.west = 'a'
@@ -16,18 +27,18 @@ class config():
         wasd.northeast = 'e'
         wasd.southwest = 'z'
         wasd.southeast = 'c'
-        keys.movement.numpad = types.SimpleNamespace()
-        numpad = keys.movement.numpad
-        numpad.north = '8'
-        numpad.south = '2'
-        numpad.west = '4'
-        numpad.east = '6'
-        numpad.northwest = '7'
-        numpad.northeast = '9'
-        numpad.southwest = '1'
-        numpad.southeast = '3'
-        keys.movement.arrows = types.SimpleNamespace()
-        arrows = keys.movement.arrows
+        layouts.numpad = types.SimpleNamespace()
+        numpad = layouts.numpad
+        numpad.north = 'KP_8'
+        numpad.south = 'KP_2'
+        numpad.west = 'KP_4'
+        numpad.east = 'KP_6'
+        numpad.northwest = 'KP_7'
+        numpad.northeast = 'KP_9'
+        numpad.southwest = 'KP_1'
+        numpad.southeast = 'KP_3'
+        layouts.arrows = types.SimpleNamespace()
+        arrows = layouts.arrows
         arrows.north = 'up'
         arrows.south = 'down'
         arrows.west = 'left'
@@ -36,3 +47,9 @@ class config():
         arrows.northeast = 'pageup'
         arrows.southwest = 'end'
         arrows.southeast = 'pagedown'
+        layouts.cursor = types.SimpleNamespace()
+        cursor = layouts.cursor
+        cursor.up = 'UP'
+        cursor.down = 'DOWN'
+        cursor.up10 = 'PAGEUP'
+        cursor.down10 = 'PAGEDOWN'
