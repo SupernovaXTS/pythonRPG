@@ -1,5 +1,5 @@
 import types
-class config():
+class Config():
     # Unused modular config
     def __init__(self):
         self.layouts = types.SimpleNamespace()

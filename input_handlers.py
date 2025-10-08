@@ -4,7 +4,7 @@ from typing import Callable, Optional, Tuple, TYPE_CHECKING, Union
 import tcod
 from tcod import libtcodpy
 import os
-
+import config
 import actions
 
 from actions import (
@@ -56,7 +56,6 @@ CURSOR_Y_KEYS = {
     events.PAGEUP: -10,
     events.PAGEDOWN: 10,
 }
-
 WAIT_KEYS = {
     events.PERIOD,
     events.KP_5,
@@ -562,8 +561,8 @@ class HistoryViewer(EventHandler):
         else:  # Any other key moves back to the main game state.
             return MainGameEventHandler(self.engine)
         return 
-# Game over handler
 class GameOverEventHandler(EventHandler):
+    # Game over handler
     def on_quit(self) -> None:
         """Handle exiting out of a finished game."""
         if os.path.exists("savegame.sav"):
@@ -577,10 +576,9 @@ class GameOverEventHandler(EventHandler):
         key = event.sym
         if key == events.ESCAPE:
             self.on_quit()
-    
-# Main Game Handler
 
 class MainGameEventHandler(EventHandler):
+    # Main Game Handler
 
     def ev_quit(self, event: tcod.event.Quit) -> Optional[Action]:
         raise SystemExit()
@@ -593,15 +591,14 @@ class MainGameEventHandler(EventHandler):
 
         player = self.engine.player
         
-        if key == events.PERIOD and modifier & (events.LSHIFT | events.RSHIFT):
-            return actions.TakeStairsAction(player)
-
+        
         if key in MOVE_KEYS:
             dx, dy = MOVE_KEYS[key]
             action = BumpAction(player, dx, dy) # type: ignore
         elif key in WAIT_KEYS:
             action = WaitAction(player) # type: ignore
-
+        if key == events.PERIOD and modifier & (events.LSHIFT | events.RSHIFT):
+            return actions.TakeStairsAction(player)
         elif key == events.ESCAPE:
             raise SystemExit()
         elif key == events.V:
@@ -612,7 +609,7 @@ class MainGameEventHandler(EventHandler):
             return InventoryActivateHandler(self.engine)
         elif key == events.H: # D conflicts with movement key
             return InventoryDropHandler(self.engine)
-        elif key == events.SLASH    :
+        elif key == events.SLASH:
             return LookHandler(self.engine)
         elif key == events.B:
             return CharacterScreenEventHandler(self.engine)
