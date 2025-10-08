@@ -80,4 +80,8 @@ class config():
             self.layouts.current = layout_name
         else:
             raise ValueError(f"Layout '{layout_name}' is not available.")
-    
+    def movementHandler(layout,key):
+        if key in layout:
+            dx, dy = getattr(super.layouts.directions, key)
+            return [dx, dy]
+        return None
