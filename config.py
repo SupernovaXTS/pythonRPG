@@ -5,6 +5,19 @@ class config():
         self.layouts = types.SimpleNamespace()
         layouts = self.layouts
         
+        layouts.default = 'wasd'
+        layouts.available = ['wasd', 'numpad', 'arrows']
+        layouts.current = layouts.default
+        # Special actions not tied to movement
+        layouts.special = types.SimpleNamespace()
+        special = layouts.special
+        special.escape = 'ESCAPE'
+        special.inventory = 'I'
+        special.drop = 'H'
+        special.pickup = 'G'
+        special.character_screen = 'B'
+        special.look = 'SLASH'
+
         # Directions for mapping to existing input handlers
         layouts.directions = types.SimpleNamespace()
         directions = layouts.directions
@@ -19,15 +32,16 @@ class config():
         layouts.wasd = types.SimpleNamespace()
         
         wasd = layouts.wasd
-        wasd.north = 'w'
-        wasd.south = 's'
-        wasd.west = 'a'
-        wasd.east = 'd'
-        wasd.northwest = 'q'
-        wasd.northeast = 'e'
-        wasd.southwest = 'z'
-        wasd.southeast = 'c'
-        wasd.wait = 'x'
+        wasd.north = 'W'
+        wasd.south = 'S'
+        wasd.west = 'A'
+        wasd.east = 'D'
+        wasd.northwest = 'Q'
+        wasd.northeast = 'E'
+        wasd.southwest = 'Z'
+        wasd.southeast = 'C'
+        wasd.wait = 'X'
+        wasd.confirm = 'RETURN'
         layouts.numpad = types.SimpleNamespace()
         numpad = layouts.numpad
         numpad.north = 'KP_8'
@@ -39,6 +53,7 @@ class config():
         numpad.southwest = 'KP_1'
         numpad.southeast = 'KP_3'
         numpad.wait = 'KP_5'
+        numpad.confirm = 'KP_ENTER'
         layouts.arrows = types.SimpleNamespace()
         arrows = layouts.arrows
         arrows.north = 'up'
@@ -50,9 +65,19 @@ class config():
         arrows.southwest = 'end'
         arrows.southeast = 'pagedown'
         arrows.wait = 'clear'
+        arrows.confirm = 'RETURN'
+
         layouts.cursor = types.SimpleNamespace()
         cursor = layouts.cursor
         cursor.up = 'UP'
         cursor.down = 'DOWN'
         cursor.up10 = 'PAGEUP'
         cursor.down10 = 'PAGEDOWN'
+    def get_layout(self):
+        return getattr(self.layouts, self.layouts.current)
+    def set_layout(self, layout_name):
+        if layout_name in self.layouts.available:
+            self.layouts.current = layout_name
+        else:
+            raise ValueError(f"Layout '{layout_name}' is not available.")
+    

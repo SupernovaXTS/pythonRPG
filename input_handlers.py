@@ -614,7 +614,7 @@ class MainGameEventHandler(EventHandler):
             return InventoryDropHandler(self.engine)
         elif key == events.SLASH    :
             return LookHandler(self.engine)
-        elif key == events.C:
+        elif key == events.B:
             return CharacterScreenEventHandler(self.engine)
 
 
