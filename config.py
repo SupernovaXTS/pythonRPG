@@ -27,6 +27,7 @@ class config():
         wasd.northeast = 'e'
         wasd.southwest = 'z'
         wasd.southeast = 'c'
+        wasd.wait = 'x'
         layouts.numpad = types.SimpleNamespace()
         numpad = layouts.numpad
         numpad.north = 'KP_8'
@@ -37,6 +38,7 @@ class config():
         numpad.northeast = 'KP_9'
         numpad.southwest = 'KP_1'
         numpad.southeast = 'KP_3'
+        numpad.wait = 'KP_5'
         layouts.arrows = types.SimpleNamespace()
         arrows = layouts.arrows
         arrows.north = 'up'
@@ -47,6 +49,7 @@ class config():
         arrows.northeast = 'pageup'
         arrows.southwest = 'end'
         arrows.southeast = 'pagedown'
+        arrows.wait = 'clear'
         layouts.cursor = types.SimpleNamespace()
         cursor = layouts.cursor
         cursor.up = 'UP'
