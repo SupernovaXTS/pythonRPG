@@ -66,7 +66,7 @@ CONFIRM_KEYS = {
     events.KP_ENTER,
 }
 #
-
+config = config.Config()
 
 ActionOrHandler = Union[Action, "BaseEventHandler"]
 """An event handler return value which can trigger an action or switch active handlers.
@@ -591,9 +591,11 @@ class MainGameEventHandler(EventHandler):
 
         player = self.engine.player
         
-        
-        if key in MOVE_KEYS:
-            dx, dy = MOVE_KEYS[key]
+        config_layout = config.get_layout()
+        move = config.movementHandler(config_layout,key)
+        if move:
+            dx = move[0]
+            dy = move[1]
             action = BumpAction(player, dx, dy) # type: ignore
         elif key in WAIT_KEYS:
             action = WaitAction(player) # type: ignore
